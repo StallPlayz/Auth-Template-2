@@ -1,5 +1,6 @@
 <script setup>
 import { Head, useForm, router } from '@inertiajs/vue3'; // Tambahkan router di sini
+import { store, destroy, update } from '@/routes/tasks'
 
 defineProps({
     tasks: Array,
@@ -10,7 +11,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post('/tasks', {
+    form.post(store.url(), {
         onSuccess: () => form.reset('title'),
     });
 };
@@ -18,7 +19,7 @@ const submit = () => {
 // Tambahkan fungsi ini untuk menghapus tugas
 const deleteTask = (id) => {
     if (confirm('Yakin ingin menghapus tugas ini?')) {
-        router.delete(`/tasks/${id}`);
+        router.delete(destroy.url(id));
     }
 };
 
@@ -26,11 +27,11 @@ const toggleTask = (task) => {
     // Jika statusnya masih 'Belum' dan mau diubah jadi 'Selesai', tanyakan dulu
     if (task.status === 'Belum') {
         if (confirm(`Yakin tugas "${task.title}" sudah selesai?`)) {
-            router.patch(`/tasks/${task.id}`);
+            router.patch(update.url(task.id));
         }
     } else {
         // Kalau mau dibalikin jadi 'Belum' lagi, langsung proses tanpa konfirmasi (atau bebas mau dikasih konfirmasi juga boleh)
-        router.patch(`/tasks/${task.id}`);
+        router.patch(update.url(task.id));
     }
 };
 </script>
